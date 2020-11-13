@@ -3,12 +3,28 @@ import { Animated ,StyleSheet, Text, View, Image, FlatList, TouchableOpacity } f
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Tracked from './Tracked'
 
+import firestore from '@react-native-firebase/firestore';
+
 const Home = (props) => {
     const [viewType, setViewType] = useState(false)
+    const [userData, setUserData] = useState(null)
 
     const onPressEvent = () => {
         props.navigation.navigate('Detail')
     }
+
+    const fetchData = async () => {
+        try {
+            const coll = firestore().collection("users")
+            console.log(Object.keys(coll),'========== INI COLL ==========')   
+            
+        } catch (error) {
+            console.log(`~~~~~~~~~~~~~~~ ERROR DI FETCH DATA ~~~~~~~~~~~~~~~`, error)
+        }
+    }
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     const renderRightAction = (progress, dragX) => {
         return <Tracked />

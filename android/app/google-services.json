@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "592993104833",
-    "firebase_url": "https://ohmyproject-2020.firebaseio.com",
-    "project_id": "ohmyproject-2020",
-    "storage_bucket": "ohmyproject-2020.appspot.com"
+    "project_number": "733926844703",
+    "firebase_url": "https://trackevent-b52e0.firebaseio.com",
+    "project_id": "trackevent-b52e0",
+    "storage_bucket": "trackevent-b52e0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:592993104833:android:03a376f018d07579213540",
+        "mobilesdk_app_id": "1:733926844703:android:2c4577d4833d5f9bf9282a",
         "android_client_info": {
           "package_name": "com.trackevent"
         }
       },
       "oauth_client": [
         {
-          "client_id": "592993104833-qu2r9jqsq8dkekfm74kmbs5pj5tbelli.apps.googleusercontent.com",
+          "client_id": "733926844703-7gld1gpsd79vd0sils0lfv86idr9hm7e.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCd0oJywnnyKP9x0V-xNbLNR1J-c5i3KDE"
+          "current_key": "AIzaSyBFJqIN-NpL5EVpRTjkBZb4_SgAwv4yHPQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "592993104833-qu2r9jqsq8dkekfm74kmbs5pj5tbelli.apps.googleusercontent.com",
+              "client_id": "733926844703-7gld1gpsd79vd0sils0lfv86idr9hm7e.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
