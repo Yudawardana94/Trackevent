@@ -2,8 +2,14 @@ import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
 
+import {getAllUser} from '../stores/actions'
+
 const Landing = (props) => {
     const [name, setName] = useState('')
+
+    useEffect(() => {
+        props.getAllUser()
+    }, [])
 
     const onSubmitButton = () => {
         props.navigation.navigate('Home')
@@ -25,7 +31,9 @@ const Landing = (props) => {
 }
 
 const mapStateToProps = (state) => state;
-const mapDispatchToProps = {}
+const mapDispatchToProps = {
+    getAllUser
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Landing)
 
