@@ -1,8 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import {S_Component} from './src/Styles'
-
 const Detail = () => {
     return (
         <View style={styles.container}>
@@ -14,5 +12,8 @@ const Detail = () => {
 export default Detail
 
 const styles = StyleSheet.create({
-    container: S_Component
+    container: {
+        flex: 1,
+        backgroundColor: "#f1f1f1"
+    }
 })

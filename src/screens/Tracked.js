@@ -1,8 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import {S_Component} from './src/Styles'
-
 const Tracked = () => {
     return (
         <View style={styles.container}>
@@ -14,5 +12,9 @@ const Tracked = () => {
 export default Tracked
 
 const styles = StyleSheet.create({
-    container: S_Component
+    container: {
+        flex: 1,
+        backgroundColor: "salmon",
+        zIndex: 10
+    }
 })
