@@ -17,7 +17,6 @@ const Home = (props) => {
     return (
         <View style={styles.container}>
                 <Swipeable
-                style
                 renderRightActions={() => renderRightAction()}
                 >
                     <View style={{height: '100%', backgroundColor: '#f1f1f1'}}>
