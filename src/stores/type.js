@@ -1,0 +1,6 @@
+export const SET_NAME = 'SET_NAME'
+export const CHECK_NAME = 'CHECK_NAME'
+export const ADD_TRACK_EVENT = 'ADD_TRACK_EVENT'
+export const REMOVE_TRACK_EVENT = 'REMOVE_TRACK_EVENT'
+export const FETCH_TRACK_EVENT = 'FETCH_TRACK_EVENT'
+

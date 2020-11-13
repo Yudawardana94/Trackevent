@@ -2,21 +2,27 @@ import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
 
+import { enterName } from '../stores/actions'
+
 const Landing = (props) => {
-    const [name, setName] = useState('')
+    const [name, setName] = useState('Fash')
 
     const onSubmitButton = () => {
-        props.navigation.navigate('Home')
+        // console.log(name)
+        props.enterName(name, props.navigation)
     }
+
     return (
         <View style={styles.container}>
             <Text>ini halaman {props.title}</Text>
+            <Text>{name}</Text>
             <View style={styles.inputWarper}>
                 <Text>Your Name Here</Text>
                 <TextInput 
                 value={name}
                 style={styles.input}
                 placeholder={"Your Name"}
+                onChangeText={(text) => setName(text)}
                 />
                 <Button title="Submit" color="black" onPress={onSubmitButton}/>
             </View>
@@ -25,7 +31,9 @@ const Landing = (props) => {
 }
 
 const mapStateToProps = (state) => state;
-const mapDispatchToProps = {}
+const mapDispatchToProps = {
+    enterName
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Landing)
 
