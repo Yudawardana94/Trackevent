@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import { StyleSheet, Text, View, TouchableOpacity, Button, FlatList, Image } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Button, FlatList, Image, SafeAreaView } from 'react-native'
 import {useNavigation} from '@react-navigation/native'
 
 import {
@@ -20,10 +20,12 @@ const Tracked = (props) => {
     }
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <Text>Hi {props.userData.name},</Text>
-                <Text>This is your tracked event list. </Text>
-            </View>
+            <SafeAreaView>
+                <View style={styles.header}>
+                    <Text>Hi {props.userData.name},</Text>
+                    <Text>This is your tracked event list. </Text>
+                </View>
+            </SafeAreaView>
             <FlatList 
                 data={props.userData.trackedEvents}
                 renderItem={({item}) => {

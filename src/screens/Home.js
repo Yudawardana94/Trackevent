@@ -8,11 +8,13 @@ import {
     Image,
     FlatList,
     TouchableOpacity,
-    ToastAndroid 
+    ToastAndroid,
+    SafeAreaView,
+    Platform,
+    Button
 } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import firestore from '@react-native-firebase/firestore';
-import {Picker} from '@react-native-picker/picker'
+import Modal from 'react-native-modal';
 
 import Tracked from './Tracked'
 import {
@@ -25,6 +27,7 @@ const Home = (props) => {
     const [viewType, setViewType] = useState(true) //if true show listview, else gridview
     const [sortType, setSortType] = useState('price')
     const [columns, setColumns] = useState(1)
+    const [modalVisible, setModalVisible] = useState(false)
     const [eventData, setEventData] = useState([
         {
             name: 'Metalica Concert',
@@ -97,6 +100,7 @@ const Home = (props) => {
             price: '$0'
         },
     ])
+    const sortOption = ['default', 'price', 'name', 'location']
 
     const onPressEvent = (data) => {
         props.navigation.navigate('Detail', {data})
@@ -127,39 +131,32 @@ const Home = (props) => {
     }
 
     const changeSortType = (value) => {
+        setModalVisible(false)
         setSortType(value)
         props.sortingData(value, props.userData)
     }
 
     return (
-        <View style={styles.container}>
+        <View 
+        style={styles.container}>
             <Swipeable
-            style
             renderRightActions={() => <Tracked />}
             >
-                <View style={{height: '100%', backgroundColor: '#4B616E'}}>
-                    <Text style={styles.title}>All Event</Text>
+                <View style={{height: '100%', backgroundColor: '#4B616E', paddingBottom: Platform.OS === 'ios' ? 20: 0}}>
+                    <SafeAreaView>
+                        <Text style={styles.title}>All Event</Text>
+                    </SafeAreaView>
                     <View style={{flexDirection: "row-reverse", justifyContent: "flex-start"}}>
                         <TouchableOpacity onPress={changeViewType} style={styles.settingType}>
                             <Text style={{color: "white", height: 20}}>View :</Text>
                             <Text style={{color: "white", marginVertical: 5}}>{viewType ? 'List View' : 'Grid View'}</Text>
                         </TouchableOpacity>
-                        <View 
+                        <TouchableOpacity 
+                        onPress={() => setModalVisible(true)}
                         style={styles.settingType}>
                             <Text style={{color: "white", height: 20}}>Sort :</Text>
-                            {/* <Text style={{color: "white", textTransform: "capitalize"}}>{sortType}</Text> */}
-                            <Picker
-                            selectedValue={sortType}
-                            style={{height: 30, minWidth: 100, color: "white"}}
-                            onValueChange={(itemValue, itemIndex) =>{
-                                changeSortType(itemValue)
-                            }}>
-                                <Picker.Item label="Default" value="default" />
-                                <Picker.Item label="Price" value="price" />
-                                <Picker.Item label="Name" value="name" />
-                                <Picker.Item label="Location" value="location" />
-                            </Picker>
-                        </View>
+                            <Text style={{color: "white", marginVertical: 5, textTransform: "capitalize"}}>{sortType}</Text>
+                        </TouchableOpacity>
                     </View>
                     {/* <Text>{JSON.stringify(props.allEvents)}</Text> */}
                     {/* <Text>{JSON.stringify(props.userData)}</Text> */}
@@ -244,7 +241,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Home)
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f1f1f1"
+        backgroundColor: "#f1f1f1",
     },
     listView: {
         backgroundColor: "#57A1C9",
@@ -263,9 +260,7 @@ const styles = StyleSheet.create({
         minHeight: 220,
         borderRadius: 3,
         margin: 10,
-        // justifyContent: "space-between",
         elevation: 2
-
     },
     leftAction: {
         flex: 1,
@@ -319,5 +314,15 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         justifyContent: "space-between",
         minHeight: 50,
+    },
+    modalStyle: {
+        borderRadius: 5,
+        padding: 15,
+        backgroundColor: "white"
+    },
+    sortOption: {
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        alignItems: Platform.OS === "ios" ? "center" : "flex-start"
     }
 })

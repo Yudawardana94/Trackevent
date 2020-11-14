@@ -15,5 +15,6 @@ export default () => {
     <StoreProvider store={store}>
       <Navigation />
     </StoreProvider>
+      // <Text>ini bisa kok</Text>
   );
 };

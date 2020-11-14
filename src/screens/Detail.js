@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator, SafeAreaView, Platform } from 'react-native';
 
 import {
     updateTrackedEvent
@@ -23,13 +23,13 @@ const Detail = (props) => {
             renderRightActions={() => <Tracked />}
             >
                 <View style={{height: '100%', backgroundColor: '#4B616E'}}>
-                    <View style={styles.backButton}>
+                    <View style={[styles.backButton, {top: Platform.OS === "ios" ? '5%' : 10}]}>
                         <TouchableOpacity onPress={() => props.navigation.goBack()}>
                             <Text style={{color: "white", padding : 10}}>Back</Text>
                         </TouchableOpacity>
                     </View>
                     <Image
-                        style={{width: '100%', height: 350, backgroundColor: 'white', marginBottom: 10}}
+                        style={{width: '100%', height: Platform.OS === 'ios' ? 400 : 350, backgroundColor: 'white', marginBottom: 10}}
                         source={{uri: data.picture}}
                         resizeMethod={"resize"}
                         resizeMode={"cover"}

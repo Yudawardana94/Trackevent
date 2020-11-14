@@ -7,7 +7,9 @@ import {
     TextInput,
     TouchableOpacity,
     ActivityIndicator,
-    Keyboard
+    Keyboard,
+    Platform,
+    SafeAreaView
 } from 'react-native'
 
 import { enterName, getAllUser } from '../stores/actions'
@@ -24,13 +26,13 @@ const Landing = (props) => {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Welcome to {'\n'+props.title}</Text>
             <View style={styles.inputWarper}>
                 <Text style={styles.tag}>Enter Your Name Here</Text>
                 <TextInput 
                 value={name}
-                style={styles.input}
+                style={[styles.input,{minHeight: 50}]}
                 placeholder={"Your Name"}
                 onChangeText={(text) => setName(text)}
                 />
@@ -48,7 +50,7 @@ const Landing = (props) => {
                 )
                 }
             </View>
-        </View>
+        </SafeAreaView>
     )
 }
 
