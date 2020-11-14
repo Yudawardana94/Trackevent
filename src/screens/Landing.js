@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity } from 'react-native'
 
 import { enterName } from '../stores/actions'
 
@@ -14,17 +14,20 @@ const Landing = (props) => {
 
     return (
         <View style={styles.container}>
-            <Text>ini halaman {props.title}</Text>
-            <Text>{name}</Text>
+            <Text style={styles.title}>Welcome to {'\n'+props.title}</Text>
             <View style={styles.inputWarper}>
-                <Text>Your Name Here</Text>
+                <Text style={styles.tag}>Enter Your Name Here</Text>
                 <TextInput 
                 value={name}
                 style={styles.input}
                 placeholder={"Your Name"}
                 onChangeText={(text) => setName(text)}
                 />
-                <Button title="Submit" color="black" onPress={onSubmitButton}/>
+                <TouchableOpacity 
+                style={styles.button}
+                onPress={onSubmitButton}>
+                    <Text style={styles.buttonText}>Sumbit</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -40,16 +43,48 @@ export default connect(mapStateToProps, mapDispatchToProps)(Landing)
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f1f1f1"
+        backgroundColor: "#4B616E"
     },
     inputWarper: {  
         alignItems: "center",
         justifyContent: "center",
-        padding: 10
+        padding: 10,
+        marginVertical: 30,
+        flex: 1
     },
     input: {
         width: '95%',
-        backgroundColor: 'seagreen',
-        marginVertical: 15
+        backgroundColor: '#DFE3E6',
+        marginVertical: 15,
+        borderRadius: 4,
+        paddingHorizontal: 15,
+        color: "#092D2E",
+        borderWidth: 1.6,
+        borderColor: "#010302"
+    },
+    button: {
+        padding: 15,
+        borderRadius: 5,
+        borderWidth: 2,
+        borderColor: "#08FC72",
+        width: 150,
+        backgroundColor: "#398259",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    buttonText: {
+        color: "white",
+        fontWeight: "bold",
+        letterSpacing: 1.5
+    },
+    title: {
+        fontSize: 24,
+        margin: 20,
+        fontWeight: "bold",
+        letterSpacing: 1.5,
+        color: "white"
+    },
+    tag: {
+        color: "white"
     }
 })

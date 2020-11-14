@@ -97,10 +97,10 @@ const Home = (props) => {
             style
             renderRightActions={() => <Tracked />}
             >
-                <View style={{height: '100%', backgroundColor: '#f1f1f1'}}>
-                <Text>ini halaman home</Text>
-                <TouchableOpacity onPress={changeViewType}>
-                    <Text>Ganti</Text>
+                <View style={{height: '100%', backgroundColor: '#4B616E'}}>
+                    <Text style={styles.title}>All Event</Text>
+                <TouchableOpacity onPress={changeViewType} style={{alignSelf: "flex-end",margin: 15}}>
+                    <Text style={{color: "white"}}>type: {viewType ? 'ListView' : 'GridView'}</Text>
                 </TouchableOpacity>
                 {
                     viewType ? (
@@ -114,12 +114,14 @@ const Home = (props) => {
                                     style={{width: '100%', height: 120, backgroundColor: 'seagreen'}}
                                     source={{uri: item.picture}}
                                     resizeMethod={"resize"}
-                                    resizeMode={"stretch"}
+                                    resizeMode={"cover"}
                                 />
-                                <View style={{marginVertical: 15, marginHorizontal: 10, minHeight: 50, justifyContent: "center"}}>
-                                    <Text>{item.name}</Text>
-                                    <Text>{item.location}</Text>
-                                    <Text>{item.isFree ? "Free" : "Paid"}</Text>
+                                <View style={{marginVertical: 15, marginHorizontal: 10, minHeight: 50, justifyContent: "center", flexDirection: "row", justifyContent: "space-between"}}>
+                                    <View>
+                                        <Text style={styles.name}>{item.name}</Text>
+                                        <Text style={styles.location}>{item.location}</Text>
+                                    </View>
+                                    <Text style={styles.price}>{item.isFree ? "Free" : "Paid"}</Text>
                                 </View>
                             </TouchableOpacity>
                         }}
@@ -129,36 +131,38 @@ const Home = (props) => {
                         key={columns}
                         />
                     ) : (
-                            <FlatList 
-                        data={eventData}
-                        renderItem={({item}) => {
-                            return <TouchableOpacity 
-                            onPress={() => onPressEvent(item)}
-                            style={styles.gridView}>
-                                <View style={{backgroundColor: 'slateblue'}}>
-                                    <Image
-                                        style={{width: '100%', backgroundColor: "gray", minHeight: 150, borderRadius: 3}}
-                                        source={{uri: item.picture}}
-                                        resizeMethod={"resize"}
-                                        resizeMode={"stretch"}
-                                    />
-                                    <View style={{zIndex: 10, alignItems: "center", justifyContent: "center", position: "absolute", minHeight: 25, backgroundColor: "yellow", paddingHorizontal: 10, margin: 5, right: 2, borderRadius: 4}}>
-                                        <Text>{item.isFree ? "Free" : "Paid"}</Text>
-                                    </View>
-                                    {/* <View style={{width: '100%', backgroundColor: "gray", minHeight: 150, borderRadius: 3}} /> */}
-                                </View>
-                                <View style={{marginVertical: 15, marginHorizontal: 10, minHeight: 50, justifyContent: "center"}}>
-                                    <Text>{item.name}</Text>
-                                    <Text>{item.location}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        }}
-                        keyExtractor={(item) => item.name+'gridHome'}
-                        numColumns={columns}
-                        horizontal={false}
-                        key={columns}
-                        columnWrapperStyle={{justifyContent: "space-evenly", flexWrap: "wrap"}}
-                        />
+                            <View style={{flex: 1, paddingBottom: 10}}>
+                                <FlatList 
+                                data={eventData}
+                                renderItem={({item}) => {
+                                    return <TouchableOpacity 
+                                    onPress={() => onPressEvent(item)}
+                                    style={styles.gridView}>
+                                        <View style={{backgroundColor: 'slateblue'}}>
+                                            <Image
+                                                style={{width: '100%', backgroundColor: "gray", minHeight: 150, borderRadius: 3}}
+                                                source={{uri: item.picture}}
+                                                resizeMethod={"resize"}
+                                                resizeMode={"stretch"}
+                                            />
+                                            <View style={{zIndex: 10, alignItems: "center", justifyContent: "center", position: "absolute", minHeight: 25, backgroundColor: "#E28413",elevation: 5, paddingHorizontal: 10, margin: 5, right: 2, borderRadius: 4}}>
+                                                <Text style={{color: "white"}}>{item.isFree ? "Free" : "Paid"}</Text>
+                                            </View>
+                                            {/* <View style={{width: '100%', backgroundColor: "gray", minHeight: 150, borderRadius: 3}} /> */}
+                                        </View>
+                                        <View style={{marginVertical: 15, marginHorizontal: 10, maxHeight: 50, justifyContent: "flex-start", alignItems: "flex-start", flexShrink: 1 }}>
+                                            <Text style={[styles.name,{fontSize: 16}]}>{item.name.length > 20 ? item.name.substring(0,18) + '...' : item.name}</Text>
+                                            <Text style={styles.location}>{item.location}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                }}
+                                keyExtractor={(item) => item.name+'gridHome'}
+                                numColumns={columns}
+                                horizontal={false}
+                                key={columns}
+                                columnWrapperStyle={{justifyContent: "space-evenly", flexWrap: "wrap"}}
+                                />
+                            </View>
                     )
                 }
                 </View>
@@ -175,32 +179,64 @@ const styles = StyleSheet.create({
         backgroundColor: "#f1f1f1"
     },
     listView: {
-        backgroundColor: "slateblue",
+        backgroundColor: "#57A1C9",
         marginHorizontal: 10,
-        borderRadius: 3,
-        // padding: 10,
-        marginVertical: 5
+        borderRadius: 4,
+        borderWidth: 2,
+        borderColor: '#34A4E0',
+        marginVertical: 5,
+        elevation: 1
     },
     gridView: {
-        backgroundColor: "seagreen",
+        backgroundColor: "#57A1C9",
+        borderWidth: 2,
+        borderColor: '#34A4E0',
         width: '45%',
-        minHeight: 200,
+        minHeight: 220,
         borderRadius: 3,
         margin: 10,
-        justifyContent: "space-between",
+        // justifyContent: "space-between",
+        elevation: 2
+
     },
     leftAction: {
         flex: 1,
         backgroundColor: 'cyan',
         justifyContent: 'center',
       },
-      actionText: {
+    actionText: {
         color: 'black',
         fontSize: 16,
-      },
-      rectButton: {
-          width:'100%',
-          height: 80,
-          backgroundColor: 'blue',
-        },
+    },
+    rectButton: {
+        width:'100%',
+        height: 80,
+        backgroundColor: 'blue',
+    },
+    name: {
+        fontWeight: "bold",
+        fontSize: 20,
+        color: "white",
+        fontStyle: "italic"
+    },
+    location: {
+        color: "white",
+    },
+    price: {
+        color: "white",
+        padding: 5,
+        paddingHorizontal: 10,
+        borderRadius: 4,
+        maxHeight: 30,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#E28413"
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: "bold",
+        letterSpacing: 1.5,
+        margin: 10,
+        color: "white"
+    }
 })
