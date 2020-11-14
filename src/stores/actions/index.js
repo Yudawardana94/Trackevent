@@ -33,20 +33,35 @@ export function getAllUser () {
     }
 }
 
-export function getAllEvents () {
+export function getAllEvents (userData) {
     return async (dispatch) => {
         try {
-            const userCollection = await eventColl.get()
-            // console.log(Object.keys(userCollection._docs[0]),'ini mau dicari doc keynya')
-            // console.log(userCollection._docs[0]._ref._documentPath._parts[1],'ini metadatanya')
+            dispatch({
+                type: SET_LOADING,
+                payload: true
+            })
+            let eventCollection
+            if(userData.setting.sort == 'default') {
+                eventCollection = await eventColl.get()
+            } else {
+                eventCollection = await eventColl
+                .orderBy(userData.setting.sort, 'asc')
+                .get()
+            }
+            // console.log(Object.keys(eventCollection._docs[0]),'ini mau dicari doc keynya')
+            // console.log(eventCollection._docs[0]._ref._documentPath._parts[1],'ini metadatanya')
 
-            let cleanData = userCollection._docs.map(el => {
+            let cleanData = eventCollection._docs.map(el => {
                 let modifyData = el._data
                 modifyData.docId = el._ref._documentPath._parts[1]
                 return modifyData
             })
 
             // console.log(Object.keys(cleanData[0]), '=== ini clean data ===')
+            dispatch({
+                type: SET_LOADING,
+                payload: false
+            })
             dispatch({
                 type: SET_EVENTS,
                 payload: cleanData
@@ -108,7 +123,11 @@ export function enterName(input, navigation) {
             const createduser = {
                 name: input,
                 age: 0,
-                trackedEvents: []
+                trackedEvents: [],
+                setting: {
+                    view: true,
+                    sort: 'default'
+                }
             }
             if(foundUser.length == 0) {
                 await userColl.add(createduser)
@@ -132,24 +151,44 @@ export function enterName(input, navigation) {
         }
     }
 }
-export function updateTrackedEvent(updateData, input){
+export function updateTrackedEvent(updateData, userData){
     return async (dispatch) => {
         try {
-            // console.log(updateData, input, 'ini di log dulu')
+            dispatch({
+                type: SET_LOADING,
+                payload: true
+            })
             let isDuplicate = false
-            for (let i = 0; i < input.trackedEvents.length; i++) {
-                if(input.trackedEvents[i].docId == updateData.docId) {
+            for (let i = 0; i < userData.trackedEvents.length; i++) {
+                if(userData.trackedEvents[i].docId == updateData.docId) {
                     isDuplicate = true
                     break
                 }
             }
+            let actionhere
             if(!isDuplicate) {
                 console.log('masoooookkkk')
-                input.trackedEvents.push(updateData)
-                await userColl.doc(input.docId).update({
-                    trackedEvents : input.trackedEvents
+                userData.trackedEvents.push(updateData)
+                await userColl.doc(userData.docId).update({
+                    trackedEvents : userData.trackedEvents
                 })
+                actionhere = 'Success add event to tracked list.'
+            } else {
+                actionhere = `Already add this event to tracked list.`
             }
+
+            dispatch({
+                type: SET_LOADING,
+                payload: false
+            })
+            dispatch({
+                type: SET_USER,
+                payload: userData
+            })
+            dispatch({
+                type: SET_MESSAGE,
+                payload: actionhere
+            })
         } catch (error) {
             errorAction(error, 'UPDATE TRACKED EVENT')
         }
@@ -165,8 +204,114 @@ export function deleteTrackedEvent(updateData, userData) {
             await userColl.doc(userData.docId).update({
                 trackedEvents : updateMaterial
             })
+            userData.trackedEvents = updateMaterial
+            dispatch({
+                type: SET_USER,
+                payload: userData
+            })
+            dispatch({
+                type: SET_MESSAGE,
+                payload: 'Success remove event.'
+            })
         } catch (error) {
             errorAction(error, 'DELETE TRACKED EVENT')
         }
     }
+}
+
+export function updateSetting(field, value, userData) {
+    return async (dispatch) => {
+        try {
+            dispatch({
+                type: SET_LOADING,
+                payload: true
+            })
+            userData.setting[field] = value
+            await userColl.doc(userData.docId).update({
+                setting: userData.setting
+            })
+            console.log('berhasil update setting user tersebut')
+            dispatch({
+                type: SET_LOADING,
+                payload: false
+            })
+            dispatch({
+                type: SET_USER,
+                payload: userData
+            })
+        } catch (error) {
+            errorAction(error, 'UPDATE SETTING')
+        }
+    }
+}
+export function sortingData(input, userData) {
+    return async (dispatch) => {
+        try {
+            dispatch({
+                type: SET_LOADING,
+                payload: true
+            })
+            let sortedEvent
+            if(input == 'default') {
+                sortedEvent = await eventColl.get()    
+            } else {
+                sortedEvent = await eventColl
+                .orderBy(input, 'asc')
+                .get()
+            }
+
+            userData.setting.sort = input
+            await userColl.doc(userData.docId).update({
+                setting: userData.setting
+            })
+            console.log(sortedEvent._docs, 'ini user collection dari sort')
+            let cleanData = sortedEvent._docs.map(el => {
+                console.log(el._data.name, JSON.stringify(el._data.isFree), el._data.price, el._data.location)
+                return el._data
+            })
+
+            // console.log(Object.keys(cleanData[0]), '=== ini clean data ===')
+            console.log(cleanData,'ini celandatanya')
+            dispatch({
+                type: SET_LOADING,
+                payload: false
+            })
+            dispatch({
+                type: SET_MESSAGE,
+                payload: input == 'default' ? 'Default order.' : `Success sort event by ${input}.`
+            })
+            dispatch({
+                type: SET_EVENTS,
+                payload: cleanData
+            })
+        } catch (error) {
+            errorAction(error, 'GET-ALL-EVENTS')
+        }
+    }
+}
+export function filterData(input, value, userData) {
+    return async (dispatch) => {
+        try {
+            console.log(input,'ini inputnya')
+            const userCollection = await eventColl
+            // .where('isFree', '==', true)
+            .orderBy('isFree', 'desc')
+            .get()
+
+            // console.log(Object.keys(userCollection._docs), 'ini user collection dari sort')
+            console.log(userCollection._docs, 'ini user collection dari sort')
+            let cleanData = userCollection._docs.map(el => {
+                console.log(el._data.name, JSON.stringify(el._data.isFree))
+                return el
+            })
+
+            // // console.log(Object.keys(cleanData[0]), '=== ini clean data ===')
+            // dispatch({
+            //     type: SET_EVENTS,
+            //     payload: cleanData
+            // })
+        } catch (error) {
+            errorAction(error, 'GET-ALL-EVENTS')
+        }
+    }   
 }

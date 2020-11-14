@@ -12,14 +12,18 @@ import {
 } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import firestore from '@react-native-firebase/firestore';
+import {Picker} from '@react-native-picker/picker'
 
 import Tracked from './Tracked'
 import {
-    getAllEvents
+    getAllEvents,
+    updateSetting,
+    sortingData
 } from '../stores/actions'
 
 const Home = (props) => {
-    const [viewType, setViewType] = useState(true)
+    const [viewType, setViewType] = useState(true) //if true show listview, else gridview
+    const [sortType, setSortType] = useState('price')
     const [columns, setColumns] = useState(1)
     const [eventData, setEventData] = useState([
         {
@@ -97,23 +101,8 @@ const Home = (props) => {
     const onPressEvent = (data) => {
         props.navigation.navigate('Detail', {data})
     }
-
-    const fetchData = async () => {
-        try {
-            const userCollection = await firestore().collection("events").get()
-            let cleanData = userCollection._docs.map(el => {
-                return el._data
-            })
-
-            console.log(cleanData, '=== ini clean data ===')
-            setEventData(cleanData)
-            
-        } catch (error) {
-            console.log(`~~~~~~~~~~~~~~~ ERROR DI FETCH DATA ~~~~~~~~~~~~~~~`, error)
-        }
-    }
     useEffect(() => {
-        props.getAllEvents()
+        props.getAllEvents(props.userData)
     }, [])
     
     useEffect(() => {
@@ -121,12 +110,26 @@ const Home = (props) => {
             props.message ? ToastAndroid.show(props.message, ToastAndroid.SHORT) : null
         }
     }, [props.message])
+    
+    useEffect(() => {
+        console.log(props.userData.setting,'ini userdata di home')
+        if(props.userData) {
+            props.userData.setting.view ? setColumns(1) : setColumns(2)
+            setViewType(props.userData.setting.view)
+            setSortType(props.userData.setting.sort)
+        }
+    }, [props.userData])
 
     const changeViewType = () => {
         viewType ? setColumns(2) : setColumns(1)
         setViewType(!viewType)
+        props.updateSetting('view', !viewType, props.userData)
     }
-    // console.log(props.userData, 'ininin userdata')
+
+    const changeSortType = (value) => {
+        setSortType(value)
+        props.sortingData(value, props.userData)
+    }
 
     return (
         <View style={styles.container}>
@@ -136,74 +139,93 @@ const Home = (props) => {
             >
                 <View style={{height: '100%', backgroundColor: '#4B616E'}}>
                     <Text style={styles.title}>All Event</Text>
-                <TouchableOpacity onPress={changeViewType} style={{alignSelf: "flex-end",margin: 15}}>
-                    <Text style={{color: "white"}}>type: {viewType ? 'ListView' : 'GridView'}</Text>
-                </TouchableOpacity>
-                {/* <Text>{JSON.stringify(props.allEvents)}</Text> */}
-                {/* <Text>{JSON.stringify(props.userData)}</Text> */}
-                {
-                    viewType ? (
-                        <FlatList 
-                        data={props.allEvents}
-                        renderItem={({item}) => {
-                            return <TouchableOpacity 
-                            onPress={() => onPressEvent(item)}
-                            style={styles.listView}>
-                                <Image
-                                    style={{width: '100%', height: 120, backgroundColor: 'seagreen'}}
-                                    source={{uri: item.picture}}
-                                    resizeMethod={"resize"}
-                                    resizeMode={"cover"}
-                                />
-                                <View style={{marginVertical: 15, marginHorizontal: 10, minHeight: 50, justifyContent: "center", flexDirection: "row", justifyContent: "space-between"}}>
-                                    <View>
-                                        <Text style={styles.name}>{item.name}</Text>
-                                        <Text style={styles.location}>{item.location}</Text>
-                                    </View>
-                                    <Text style={styles.price}>{item.isFree ? "Free" : "Paid"}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        }}
-                        keyExtractor={(item) => item.name+'gridList'}
-                        numColumns={columns}
-                        horizontal={false}
-                        key={columns}
-                        />
-                    ) : (
-                            <View style={{flex: 1, paddingBottom: 10}}>
-                                <FlatList 
-                                data={props.allEvents}
-                                renderItem={({item}) => {
-                                    return <TouchableOpacity 
-                                    onPress={() => onPressEvent(item)}
-                                    style={styles.gridView}>
-                                        <View style={{backgroundColor: 'slateblue'}}>
-                                            <Image
-                                                style={{width: '100%', backgroundColor: "gray", minHeight: 150, borderRadius: 3}}
-                                                source={{uri: item.picture}}
-                                                resizeMethod={"resize"}
-                                                resizeMode={"cover"}
-                                            />
-                                            <View style={{zIndex: 10, alignItems: "center", justifyContent: "center", position: "absolute", minHeight: 25, backgroundColor: "#E28413",elevation: 5, paddingHorizontal: 10, margin: 5, right: 2, borderRadius: 4}}>
-                                                <Text style={{color: "white"}}>{item.isFree ? "Free" : "Paid"}</Text>
-                                            </View>
-                                            {/* <View style={{width: '100%', backgroundColor: "gray", minHeight: 150, borderRadius: 3}} /> */}
-                                        </View>
-                                        <View style={{marginVertical: 15, marginHorizontal: 10, maxHeight: 50, justifyContent: "flex-start", alignItems: "flex-start", flexShrink: 1 }}>
-                                            <Text style={[styles.name,{fontSize: 16}]}>{item.name.length > 20 ? item.name.substring(0,18) + '...' : item.name}</Text>
+                    <View style={{flexDirection: "row-reverse", justifyContent: "flex-start"}}>
+                        <TouchableOpacity onPress={changeViewType} style={styles.settingType}>
+                            <Text style={{color: "white", height: 20}}>View :</Text>
+                            <Text style={{color: "white", marginVertical: 5}}>{viewType ? 'List View' : 'Grid View'}</Text>
+                        </TouchableOpacity>
+                        <View 
+                        style={styles.settingType}>
+                            <Text style={{color: "white", height: 20}}>Sort :</Text>
+                            {/* <Text style={{color: "white", textTransform: "capitalize"}}>{sortType}</Text> */}
+                            <Picker
+                            selectedValue={sortType}
+                            style={{height: 30, minWidth: 100, color: "white"}}
+                            onValueChange={(itemValue, itemIndex) =>{
+                                changeSortType(itemValue)
+                            }}>
+                                <Picker.Item label="Default" value="default" />
+                                <Picker.Item label="Price" value="price" />
+                                <Picker.Item label="Name" value="name" />
+                                <Picker.Item label="Location" value="location" />
+                            </Picker>
+                        </View>
+                    </View>
+                    {/* <Text>{JSON.stringify(props.allEvents)}</Text> */}
+                    {/* <Text>{JSON.stringify(props.userData)}</Text> */}
+                    {
+                        viewType ? (
+                            <FlatList 
+                            data={props.allEvents}
+                            renderItem={({item}) => {
+                                return <TouchableOpacity 
+                                onPress={() => onPressEvent(item)}
+                                style={styles.listView}>
+                                    <Image
+                                        style={{width: '100%', height: 120, backgroundColor: 'seagreen'}}
+                                        source={{uri: item.picture}}
+                                        resizeMethod={"resize"}
+                                        resizeMode={"cover"}
+                                    />
+                                    <View style={{marginVertical: 15, marginHorizontal: 10, minHeight: 50, justifyContent: "center", flexDirection: "row", justifyContent: "space-between"}}>
+                                        <View>
+                                            <Text style={styles.name}>{item.name}</Text>
                                             <Text style={styles.location}>{item.location}</Text>
                                         </View>
-                                    </TouchableOpacity>
-                                }}
-                                keyExtractor={(item) => item.name+'gridHome'}
-                                numColumns={columns}
-                                horizontal={false}
-                                key={columns}
-                                columnWrapperStyle={{justifyContent: "space-between", flexWrap: "wrap", marginHorizontal: 5}}
-                                />
-                            </View>
-                    )
-                }
+                                        <Text style={styles.price}>{item.isFree ? "Free" : "Paid"}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            }}
+                            keyExtractor={(item) => item.name+'gridList'}
+                            numColumns={columns}
+                            horizontal={false}
+                            key={columns}
+                            />
+                        ) : (
+                                <View style={{flex: 1, paddingBottom: 10}}>
+                                    <FlatList 
+                                    data={props.allEvents}
+                                    renderItem={({item}) => {
+                                        return <TouchableOpacity 
+                                        onPress={() => onPressEvent(item)}
+                                        style={styles.gridView}>
+                                            <View style={{backgroundColor: 'slateblue'}}>
+                                                <Image
+                                                    style={{width: '100%', backgroundColor: "gray", minHeight: 150, borderRadius: 3}}
+                                                    source={{uri: item.picture}}
+                                                    resizeMethod={"resize"}
+                                                    resizeMode={"cover"}
+                                                />
+                                                <View style={{zIndex: 10, alignItems: "center", justifyContent: "center", position: "absolute", minHeight: 25, backgroundColor: "#E28413",elevation: 5, paddingHorizontal: 10, margin: 5, right: 2, borderRadius: 4}}>
+                                                    <Text style={{color: "white"}}>{item.isFree ? "Free" : "Paid"}</Text>
+                                                </View>
+                                                {/* <View style={{width: '100%', backgroundColor: "gray", minHeight: 150, borderRadius: 3}} /> */}
+                                            </View>
+                                            <View style={{marginVertical: 15, marginHorizontal: 10, maxHeight: 50, justifyContent: "flex-start", alignItems: "flex-start", flexShrink: 1 }}>
+                                                <Text style={[styles.name,{fontSize: 16}]}>{item.name.length > 20 ? item.name.substring(0,18) + '...' : item.name}</Text>
+                                                <Text style={styles.location}>{item.location}</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    }}
+                                    keyExtractor={(item) => item.name+'gridHome'}
+                                    numColumns={columns}
+                                    horizontal={false}
+                                    key={columns}
+                                    // columnWrapperStyle={{justifyContent: "space-between", flexWrap: "wrap", marginHorizontal: 5}}
+                                    />
+                                </View>
+                        )
+                    }
                 </View>
             </Swipeable>
         </View>
@@ -212,7 +234,9 @@ const Home = (props) => {
 
 const mapStateToProps = (state) => state;
 const mapDispatchToProps = {
-    getAllEvents
+    getAllEvents,
+    updateSetting,
+    sortingData
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
@@ -282,5 +306,18 @@ const styles = StyleSheet.create({
         letterSpacing: 1.5,
         margin: 10,
         color: "white"
+    },
+    settingType: {
+        alignSelf: "flex-end",
+        marginVertical: 15,
+        marginRight: 15,
+        backgroundColor: "#57A1C9",
+        paddingHorizontal: 10,
+        borderRadius: 2,
+        paddingVertical: 5,
+        elevation: 3,
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        minHeight: 50,
     }
 })

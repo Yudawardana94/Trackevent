@@ -9,8 +9,12 @@ import {
 
 const Tracked = (props) => {
     const navigation = useNavigation()
-    console.log(props.userData, 'ini userdata')
-    
+
+    const onPressAction = (data) => {
+        console.log('pindah')
+        navigation.navigate('Detail', {data})
+    }
+
     const deleteAction = (item) => {
         props.deleteTrackedEvent(item, props.userData)
     }
@@ -23,9 +27,9 @@ const Tracked = (props) => {
             <FlatList 
                 data={props.userData.trackedEvents}
                 renderItem={({item}) => {
-                    return <TouchableOpacity style={styles.trackedList}>
+                    return <TouchableOpacity style={styles.trackedList} onPress={() => onPressAction(item)}>
                         <Image
-                            style={{width: 100, backgroundColor: "gray", minHeight: 100, borderRadius: 3}}
+                            style={{width: 100, backgroundColor: "gray", minHeight: 100, borderRadius: 3, borderWidth: 2.5, borderColor: '#F1F1F1'}}
                             source={{uri: item.picture}}
                             resizeMethod={"resize"}
                             resizeMode={"cover"}

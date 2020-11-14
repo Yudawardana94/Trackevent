@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Button } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 import {
     updateTrackedEvent
 } from '../stores/actions'
+import Tracked from './Tracked'
 
 const Detail = (props) => {
     const data = props.route.params.data
@@ -16,33 +18,48 @@ const Detail = (props) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.backButton}>
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                    <Text style={{color: "white", padding : 10}}>Back</Text>
-                </TouchableOpacity>
-            </View>
-            <Image
-                style={{width: '100%', height: 350, backgroundColor: 'white', marginBottom: 10}}
-                source={{uri: data.picture}}
-                resizeMethod={"resize"}
-                resizeMode={"cover"}
-            />
-            <View style={styles.bodyWarper}>
-                <Text style={[styles.bodyText, {fontStyle: 'italic', letterSpacing: 1.3,fontSize: 30, fontWeight: "bold"}]}>{data.name}</Text>
-                <View style={{}}>
-                    <Text style={{color: "white"}}>Location: </Text>
-                <Text style={{color: "white", fontStyle: "italic", fontWeight: "600", fontSize: 14}}>{data.location}</Text>
+            <Swipeable
+            style
+            renderRightActions={() => <Tracked />}
+            >
+                <View style={{height: '100%', backgroundColor: '#4B616E'}}>
+                    <View style={styles.backButton}>
+                        <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                            <Text style={{color: "white", padding : 10}}>Back</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Image
+                        style={{width: '100%', height: 350, backgroundColor: 'white', marginBottom: 10}}
+                        source={{uri: data.picture}}
+                        resizeMethod={"resize"}
+                        resizeMode={"cover"}
+                    />
+                    <View style={styles.bodyWarper}>
+                        <Text style={[styles.bodyText, {fontStyle: 'italic', letterSpacing: 1.3,fontSize: 30, fontWeight: "bold"}]}>{data.name}</Text>
+                        <View style={{}}>
+                            <Text style={{color: "white"}}>Location: </Text>
+                        <Text style={{color: "white", fontStyle: "italic", fontWeight: "600", fontSize: 14}}>{data.location}</Text>
+                        </View>
+                        <View style={{flexDirection: "row", alignSelf: 'flex-end', marginHorizontal: 20, alignItems: "flex-end"}}>
+                            <Text style={styles.bodyText}>Entrance Fee: </Text>
+                            <Text style={[styles.bodyText, {fontSize: 25, paddingLeft: 10, fontWeight: "bold"}]}>{data.isFree ? "Free" : data.price}</Text>
+                        </View>
+                    </View>
+                    {
+                        props.isLoading ? (
+                            <View style={styles.trackButton}>
+                                <ActivityIndicator size="small" color="#0000ff" />
+                            </View>
+                        ) :(
+                            <TouchableOpacity 
+                            style={styles.trackButton}
+                            onPress={trackEvent}>
+                                <Text style={styles.trackButtonText}>Track this event</Text>
+                            </TouchableOpacity>
+                        )
+                    }
                 </View>
-                <View style={{flexDirection: "row", alignSelf: 'flex-end', marginHorizontal: 20, alignItems: "flex-end"}}>
-                    <Text style={styles.bodyText}>Entrance Fee: </Text>
-                    <Text style={[styles.bodyText, {fontSize: 25, paddingLeft: 10, fontWeight: "bold"}]}>{data.isFree ? "Free" : data.price}</Text>
-                </View>
-            </View>
-            <TouchableOpacity 
-            style={styles.trackButton}
-            onPress={trackEvent}>
-                <Text style={styles.trackButtonText}>Track this event</Text>
-            </TouchableOpacity>
+            </Swipeable>
         </View>
     )
 }
@@ -77,12 +94,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#E28413',
         borderRadius: 4,
         elevation: 10,
-        // padding: 10,
         paddingHorizontal: 20
     },
     trackButton: {
         position: "absolute",
-        bottom: 35,
+        bottom: 20,
         width: '95%',
         padding: 10,
         alignItems: "center",
