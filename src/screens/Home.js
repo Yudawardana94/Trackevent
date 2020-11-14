@@ -15,8 +15,14 @@ const Home = (props) => {
 
     const fetchData = async () => {
         try {
-            const coll = firestore().collection("users")
-            console.log(Object.keys(coll),'========== INI COLL ==========')   
+            const userCollection = await firestore().collection("events").get()
+            // console.log(Object.keys(userCollection._docs))
+            let cleanData = userCollection._docs.map(el => {
+                return el._data
+            })
+
+            console.log(cleanData, '=== ini clean data ===')
+            // props.getAllUser()
             
         } catch (error) {
             console.log(`~~~~~~~~~~~~~~~ ERROR DI FETCH DATA ~~~~~~~~~~~~~~~`, error)
