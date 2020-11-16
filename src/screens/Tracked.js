@@ -16,14 +16,15 @@ const Tracked = (props) => {
     }
 
     const deleteAction = (item) => {
+        console.log(item)
         props.deleteTrackedEvent(item, props.userData)
     }
     return (
         <View style={styles.container}>
             <SafeAreaView>
                 <View style={styles.header}>
-                    <Text>Hi {props.userData.name},</Text>
-                    <Text>This is your tracked event list. </Text>
+                    <Text style={{color: "white", fontSize: 16}}>Hi {props.userData.name},</Text>
+                    <Text style={{color: "white", fontSize: 16}}>This is your tracked event list. </Text>
                 </View>
             </SafeAreaView>
             <FlatList 
@@ -31,7 +32,7 @@ const Tracked = (props) => {
                 renderItem={({item}) => {
                     return <TouchableOpacity style={styles.trackedList} onPress={() => onPressAction(item)}>
                         <Image
-                            style={{width: 100, backgroundColor: "gray", minHeight: 100, borderRadius: 3, borderWidth: 2.5, borderColor: '#F1F1F1'}}
+                            style={styles.image}
                             source={{uri: item.picture}}
                             resizeMethod={"resize"}
                             resizeMode={"cover"}
@@ -39,12 +40,12 @@ const Tracked = (props) => {
                         <View style={styles.detailWraper}>
                             <Text style={styles.titleText}>{item.name}</Text>
                             <Text>{item.location}</Text>
-                            <Text>{item.isFree ? 'Free Event' : item.price}</Text>
+                            <Text>${item.isFree ? 'Free Event' : item.price}</Text>
                         </View>
                         <TouchableOpacity 
                         onPress={() => deleteAction(item)}
                         style={styles.hapusButton}>
-                            <Text>Hapus</Text>
+                            <Text style={styles.deleteTag}>Delete</Text>
                         </TouchableOpacity>
 
                     </TouchableOpacity>
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     header: {
         padding: 20,
         marginBottom: 10,
-        backgroundColor: "skyblue"
+        backgroundColor: "steelblue"
     },
     titleText: {
         fontSize: 20,
@@ -99,6 +100,23 @@ const styles = StyleSheet.create({
         alignItems: "flex-end",
         justifyContent: "center",
         flex: 1,
-        padding: 10
+        padding: 10,
+        
+    },
+    deleteTag: {
+        backgroundColor: "crimson",
+        color: "white",
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        width: 50,
+        textAlign: "center",
+    },
+    image : {
+        width: 100,
+        backgroundColor: "gray",
+        minHeight: 100,
+        borderRadius: 3,
+        borderWidth: 2.5,
+        borderColor: '#F1F1F1'
     }
 })

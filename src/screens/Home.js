@@ -224,7 +224,23 @@ const Home = (props) => {
                         )
                     }
                 </View>
+                <Modal
+                onBackdropPress={() => setModalVisible(false)}
+                isVisible={modalVisible}>
+                    <View style={styles.modalStyle}>
+                        {
+                            sortOption.map((el, idx) => {
+                                return <>
+                                <TouchableOpacity style={styles.sortOption} onPress={() => changeSortType(el)} key={idx+'sortopt' }>
+                                    <Text style={{textTransform: "capitalize"}}>{el}</Text>
+                                </TouchableOpacity>
+                                </>
+                            })
+                        }
+                    </View>
+                </Modal>
             </Swipeable>
+
         </View>
     )
 }
@@ -314,6 +330,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         justifyContent: "space-between",
         minHeight: 50,
+        minWidth: 60
     },
     modalStyle: {
         borderRadius: 5,

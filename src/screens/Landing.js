@@ -15,7 +15,7 @@ import {
 import { enterName, getAllUser } from '../stores/actions'
 
 const Landing = (props) => {
-    const [name, setName] = useState('Yuda wardana')
+    const [name, setName] = useState('')
 
     const onSubmitButton = () => {
         if(name !== '') {
