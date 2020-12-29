@@ -10,6 +10,7 @@ import HomeScreen from '../screens/Home'
 import DetailScreen from '../screens/Detail'
 import LandingScreen from '../screens/Landing'
 import TrackedScreen from '../screens/Tracked'
+import TestScreen from '../screens/test'
 
 const navigation = () => {
     return (
@@ -19,6 +20,7 @@ const navigation = () => {
                 <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
                 <Stack.Screen name="Detail" component={DetailScreen} options={{headerShown: false}}/>
                 <Stack.Screen name="Tracked" component={TrackedScreen} options={{headerShown: false}}/>
+                <Stack.Screen name="Test" component={TestScreen} options={{headerShown: false}}/>
             </Stack.Navigator>
         </NavigationContainer>
     )
