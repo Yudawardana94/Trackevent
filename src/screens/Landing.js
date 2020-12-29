@@ -42,11 +42,18 @@ const Landing = (props) => {
                     </View>
                 ) : 
                 (
+                    <>
                     <TouchableOpacity 
                     style={styles.button}
                     onPress={onSubmitButton}>
                         <Text style={styles.buttonText}>Sumbit</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity 
+                    style={styles.button}
+                    onPress={() => props.navigation.navigate("Test")}>
+                        <Text style={styles.buttonText}>Test</Text>
+                    </TouchableOpacity>
+                    </>
                 )
                 }
             </View>
