@@ -23,7 +23,8 @@ const Landing = (props) => {
         }
         setName('')
         Keyboard.dismiss()
-        //eh hilang maaf ya
+        // eh hilang maaf ya
+        // eh hilang maaf ya
     }
 
     return (
